@@ -38,6 +38,6 @@ struct MyAppApp: App {
         // is available. The actual ModelContainer is accessed via the environment in SwiftUI,
         // so batch processing is triggered via scenePhase.onChange above.
         // Full service assembly with ModelContainer happens at first foreground.
-        await NotificationServiceImpl().requestPermission()
+        await notificationService.requestPermission()
     }
 }
