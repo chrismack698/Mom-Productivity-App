@@ -18,7 +18,8 @@ struct TriageBatchProcessorTests {
         }
 
         let service = SpyClaudeService()
-        let processor = TriageBatchProcessor(container: container, claudeService: service, notificationService: StubNotificationService())
+        let profileService = UserProfileService(container: container, claudeService: StubClaudeService())
+        let processor = TriageBatchProcessor(container: container, claudeService: service, notificationService: StubNotificationService(), userProfileService: profileService)
         await processor.processPendingBatch()
 
         #expect(service.triageCallCount == 1)
@@ -39,7 +40,8 @@ struct TriageBatchProcessorTests {
         }
 
         let service = SpyClaudeService()
-        let processor = TriageBatchProcessor(container: container, claudeService: service, notificationService: StubNotificationService())
+        let profileService = UserProfileService(container: container, claudeService: StubClaudeService())
+        let processor = TriageBatchProcessor(container: container, claudeService: service, notificationService: StubNotificationService(), userProfileService: profileService)
         await processor.processPendingBatch()
 
         #expect(service.triageCallCount == 0)
@@ -59,7 +61,8 @@ struct TriageBatchProcessorTests {
         }
 
         let service = SpyClaudeService()
-        let processor = TriageBatchProcessor(container: container, claudeService: service, notificationService: StubNotificationService())
+        let profileService = UserProfileService(container: container, claudeService: StubClaudeService())
+        let processor = TriageBatchProcessor(container: container, claudeService: service, notificationService: StubNotificationService(), userProfileService: profileService)
         await processor.processPendingBatch()
 
         // Simple captures should NOT trigger a cloud call

@@ -5,11 +5,13 @@ actor TriageBatchProcessor {
     private let container: ModelContainer
     private let claudeService: any ClaudeService
     private let notificationService: any NotificationServiceProtocol
+    private let userProfileService: UserProfileService
 
-    init(container: ModelContainer, claudeService: any ClaudeService, notificationService: any NotificationServiceProtocol) {
+    init(container: ModelContainer, claudeService: any ClaudeService, notificationService: any NotificationServiceProtocol, userProfileService: UserProfileService) {
         self.container = container
         self.claudeService = claudeService
         self.notificationService = notificationService
+        self.userProfileService = userProfileService
     }
 
     func processPendingBatch() async {
@@ -43,6 +45,15 @@ actor TriageBatchProcessor {
             // Fetch user context
             let profileDescriptor = FetchDescriptor<UserProfile>()
             let userContext = (try? context.fetch(profileDescriptor))?.first?.preferenceSummary ?? ""
+
+            // Check rate limit before calling cloud
+            guard await userProfileService.canMakeCloudCall(isPaidUser: false) else {
+                // Rate limited — reset complex captures to pending so they retry tomorrow
+                complex.forEach { $0.processingStatus = .pending }
+                try? context.save()
+                return
+            }
+            await userProfileService.recordCloudCall()
 
             do {
                 let results = try await claudeService.triage(captures: complex, userContext: userContext)
