@@ -10,8 +10,7 @@ struct FeedView: View {
         NavigationStack(path: $navigationPath) {
             ScrollView {
                 VStack(spacing: 0) {
-                    // Capture bar placeholder — replaced when CaptureBarView is added in Task 5
-                    captureBarPlaceholder
+                    CaptureBarView(onCapture: { viewModel.loadItems() })
                         .padding(.horizontal)
                         .padding(.top)
 
@@ -53,20 +52,6 @@ struct FeedView: View {
             viewModel = FeedViewModel(context: context)
             viewModel.loadItems()
         }
-    }
-
-    private var captureBarPlaceholder: some View {
-        HStack {
-            Image(systemName: "mic")
-                .foregroundStyle(.secondary)
-            Text("Add anything…")
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            Image(systemName: "camera")
-                .foregroundStyle(.secondary)
-        }
-        .padding()
-        .background(.regularMaterial, in: Capsule())
     }
 
     @ViewBuilder
