@@ -10,6 +10,7 @@ final class FeedViewModel {
     var thisWeekItems: [ActionItem] = []
     var somedayItems: [ActionItem] = []
     var pendingCaptureCount: Int = 0
+    var userProfileService: UserProfileService?
 
     init(context: ModelContext) {
         self.context = context
@@ -34,14 +35,21 @@ final class FeedViewModel {
     func markComplete(_ item: ActionItem) {
         item.isComplete = true
         try? context.save()
+        Task {
+            await userProfileService?.log("User completed: \(item.title) [category: \(item.category), horizon: \(item.timeHorizon.rawValue)]")
+        }
     }
 
     func snooze(_ item: ActionItem) {
+        let from = item.timeHorizon
         switch item.timeHorizon {
         case .today: item.timeHorizon = .thisWeek
         case .thisWeek: item.timeHorizon = .someday
         case .someday: break
         }
         try? context.save()
+        Task {
+            await userProfileService?.log("User snoozed: \(item.title) from \(from.rawValue)")
+        }
     }
 }
