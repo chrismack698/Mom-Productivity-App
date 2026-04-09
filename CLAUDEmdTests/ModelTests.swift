@@ -54,7 +54,7 @@ struct ModelTests {
         #expect(action.messages.count == 1)
     }
 
-    @Test func userProfileIsSingleton() throws {
+    @Test func userProfileDefaultsToEmptyStrings() throws {
         let profile = UserProfile()
         container.mainContext.insert(profile)
         #expect(profile.observationLog == "")
