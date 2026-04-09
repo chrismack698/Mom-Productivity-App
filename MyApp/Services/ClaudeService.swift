@@ -160,7 +160,9 @@ final class ClaudeServiceImpl: ClaudeService {
             APIMessage(role: $0.role == .user ? "user" : "assistant", content: $0.content)
         }
 
-        guard apiMessages.last?.role == "user" else { return "" }
+        guard apiMessages.last?.role == "user" else {
+            throw ClaudeError.parseError
+        }
 
         let request = APIRequest(
             model: model,

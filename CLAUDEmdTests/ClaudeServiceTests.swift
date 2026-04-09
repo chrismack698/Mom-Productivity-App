@@ -51,6 +51,41 @@ struct ClaudeServiceTests {
             try await service.triage(captures: [capture], userContext: "")
         }
     }
+
+    @Test func triageHandlesMultipleTasks() async throws {
+        let session = MockURLSession()
+        let mockJSON = """
+        {
+          "content": [{
+            "text": "{\\"tasks\\":[{\\"title\\":\\"Call doctor\\",\\"firstStep\\":\\"Find number\\",\\"timeHorizon\\":\\"today\\",\\"deadline\\":null,\\"category\\":\\"appointment\\",\\"scheduledNotification\\":null},{\\"title\\":\\"Buy diapers\\",\\"firstStep\\":\\"Order online\\",\\"timeHorizon\\":\\"thisWeek\\",\\"deadline\\":null,\\"category\\":\\"errand\\",\\"scheduledNotification\\":null}]}"
+          }]
+        }
+        """
+        session.mockData = mockJSON.data(using: .utf8)!
+        session.mockStatusCode = 200
+
+        let service = ClaudeServiceImpl(apiKey: "test-key", urlSession: session)
+        let capture = CaptureItem(rawContent: "call doctor and buy diapers")
+        let results = try await service.triage(captures: [capture], userContext: "")
+        #expect(results.count == 2)
+        #expect(results[0].timeHorizon == .today)
+        #expect(results[1].timeHorizon == .thisWeek)
+    }
+
+    @Test func chatThrowsWhenLastMessageIsNotUser() async throws {
+        let session = MockURLSession()
+        session.mockData = Data()
+        session.mockStatusCode = 200
+
+        let service = ClaudeServiceImpl(apiKey: "test-key", urlSession: session)
+        let capture = CaptureItem(rawContent: "test")
+        let item = ActionItem(title: "Test", firstStep: "Do it", timeHorizon: .today, category: "errand", captureItem: capture)
+        // Pass only an assistant message — last message is NOT user
+        let assistantMessage = ChatMessage(role: .assistant, content: "I can help with that", actionItem: item)
+        await #expect(throws: ClaudeError.self) {
+            try await service.chat(messages: [assistantMessage], taskContext: item, userContext: "")
+        }
+    }
 }
 
 // MARK: - Mock
