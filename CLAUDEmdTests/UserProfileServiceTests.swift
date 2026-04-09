@@ -39,6 +39,30 @@ struct UserProfileServiceTests {
         #expect(spy.chatCallCount == 0)
     }
 
+    @Test func summarizesWhenObservationsExistAndNotSummarizedToday() async throws {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(
+            for: CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self,
+            configurations: config
+        )
+        let spy = SpyClaudeServiceForProfile()
+        let service = UserProfileService(container: container, claudeService: spy)
+
+        // Add observations so there's content to summarize
+        await service.log("User completed: Reschedule pediatrician")
+        await service.log("User completed: Return Nike shoes")
+
+        // lastSummarizedAt is nil (never summarized) — should trigger summarization
+        await service.summarizeIfNeeded()
+
+        #expect(spy.chatCallCount == 1)
+
+        // Verify summary was stored
+        let profile = await service.fetchOrCreateProfile()
+        #expect(!profile.preferenceSummary.isEmpty)
+        #expect(profile.lastSummarizedAt != nil)
+    }
+
     @Test func rateLimitReturnsFalseAfterTenCalls() async throws {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(
