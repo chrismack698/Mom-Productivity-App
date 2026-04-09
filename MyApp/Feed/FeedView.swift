@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct FeedView: View {
+    var userProfileService: UserProfileService?
     @Environment(\.modelContext) private var context
     @State private var viewModel = FeedViewModel(context: ModelContext(try! ModelContainer(for: ActionItem.self)))
     @State private var navigationPath = NavigationPath()
@@ -39,7 +40,7 @@ struct FeedView: View {
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink(destination: Text("Settings coming in Task 10")) {
+                    NavigationLink(destination: SettingsView()) {
                         Image(systemName: "gearshape")
                     }
                 }
@@ -50,6 +51,7 @@ struct FeedView: View {
         }
         .onAppear {
             viewModel = FeedViewModel(context: context)
+            viewModel.userProfileService = userProfileService
             viewModel.loadItems()
         }
     }
@@ -79,6 +81,6 @@ struct FeedView: View {
 }
 
 #Preview {
-    FeedView()
+    FeedView(userProfileService: nil)
         .modelContainer(for: [CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self], inMemory: true)
 }
