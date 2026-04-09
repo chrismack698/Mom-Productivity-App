@@ -46,7 +46,7 @@ struct FeedView: View {
                 }
             }
             .navigationDestination(for: ActionItem.self) { item in
-                Text("Detail view coming in Task 4: \(item.title)")
+                TaskDetailView(item: item)
             }
         }
         .onAppear {
