@@ -27,7 +27,6 @@ final class CaptureViewModel {
 
     func submitImage(_ image: UIImage) async {
         let description = await ImageCaptureSession.describe(image)
-        guard !description.isEmpty else { return }
         let filename = UUID().uuidString + ".jpg"
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
         if let data = image.jpegData(compressionQuality: 0.8) {
@@ -39,7 +38,8 @@ final class CaptureViewModel {
     }
 
     func startVoiceCapture() async {
-        guard await SFSpeechRecognizer.hasAuthorizationToRecognize() else { return }
+        let hasPermission = await VoiceCaptureSession.requestPermission()
+        guard hasPermission else { return }
         isRecording = true
         liveTranscript = ""
         let session = VoiceCaptureSession()
