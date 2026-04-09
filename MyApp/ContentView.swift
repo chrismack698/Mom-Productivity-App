@@ -2,10 +2,11 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("Mom Productivity App")
+        FeedView()
     }
 }
 
 #Preview {
     ContentView()
+        .modelContainer(for: [CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self], inMemory: true)
 }
