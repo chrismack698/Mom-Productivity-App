@@ -15,6 +15,17 @@ struct FeedView: View {
                         .padding(.horizontal)
                         .padding(.top)
 
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Say it once. It won't slip.")
+                            .font(.subheadline.weight(.semibold))
+                        Text("Capture a thought fast, then let the app turn it into the next right action.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                    .padding(.top, 12)
+
                     if viewModel.pendingCaptureCount > 0 {
                         Label("\(viewModel.pendingCaptureCount) item\(viewModel.pendingCaptureCount == 1 ? "" : "s") processing…", systemImage: "sparkles")
                             .font(.caption)
@@ -30,23 +41,23 @@ struct FeedView: View {
                         ContentUnavailableView(
                             "Nothing on your plate",
                             systemImage: "checkmark.circle",
-                            description: Text("Capture something to get started.")
+                            description: Text("Capture a life-admin thought to get started.")
                         )
                         .padding(.top, 60)
                     }
                 }
             }
-            .navigationTitle("Second Brain")
+            .navigationTitle("Family Admin")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink(destination: SettingsView()) {
+                    NavigationLink(destination: AppSettingsView()) {
                         Image(systemName: "gearshape")
                     }
                 }
             }
             .navigationDestination(for: ActionItem.self) { item in
-                TaskDetailView(item: item)
+                ActionItemEditorView(item: item, viewModel: viewModel)
             }
         }
         .onAppear {
@@ -82,5 +93,17 @@ struct FeedView: View {
 
 #Preview {
     FeedView(userProfileService: nil)
-        .modelContainer(for: [CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self], inMemory: true)
+        .modelContainer(
+            for: [
+                CaptureItem.self,
+                ActionItem.self,
+                ChatMessage.self,
+                UserProfile.self,
+                PreferenceSignal.self,
+                UserPreference.self,
+                MemorySummary.self,
+                AppSettings.self
+            ],
+            inMemory: true
+        )
 }

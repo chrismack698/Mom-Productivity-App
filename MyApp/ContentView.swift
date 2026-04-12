@@ -33,5 +33,17 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: [CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self], inMemory: true)
+        .modelContainer(
+            for: [
+                CaptureItem.self,
+                ActionItem.self,
+                ChatMessage.self,
+                UserProfile.self,
+                PreferenceSignal.self,
+                UserPreference.self,
+                MemorySummary.self,
+                AppSettings.self
+            ],
+            inMemory: true
+        )
 }

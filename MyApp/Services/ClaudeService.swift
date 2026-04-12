@@ -55,7 +55,7 @@ final class ClaudeServiceImpl: ClaudeService {
         }.joined(separator: "\n")
 
         let systemPrompt = """
-        You are a life admin assistant for a busy mom. Analyze the captured items and return ONLY valid JSON.
+        You are a voice-first family life admin assistant. Analyze the captured items and return ONLY valid JSON.
 
         User context and preferences:
         \(userContext.isEmpty ? "No preferences yet — this is a new user." : userContext)
@@ -80,9 +80,12 @@ final class ClaudeServiceImpl: ClaudeService {
 
         Rules:
         - Break vague captures into concrete first steps (~10 min each)
+        - Keep output practical, calm, and boring
+        - Prefer one clear next action over a long plan
         - Only set deadline if explicitly mentioned
+        - Do not invent calendar times or commitments
         - Only include scheduledNotification if there's a real deadline or urgent time sensitivity
-        - One capture may produce multiple tasks
+        - One capture may produce multiple tasks only when the user clearly mentioned multiple responsibilities
         - timeHorizon must be exactly: today, thisWeek, or someday
         """
 
@@ -139,7 +142,7 @@ final class ClaudeServiceImpl: ClaudeService {
 
     func chat(messages: [ChatMessage], taskContext: ActionItem, userContext: String) async throws -> String {
         let systemPrompt = """
-        You are a helpful life admin assistant for a busy mom.
+        You are a helpful family life admin assistant.
 
         Task context: \(taskContext.title)
         First step: \(taskContext.firstStep)
@@ -148,7 +151,7 @@ final class ClaudeServiceImpl: ClaudeService {
         User preferences:
         \(userContext.isEmpty ? "No preferences yet." : userContext)
 
-        Keep responses brief, practical, and warm. No jargon. Focus on reducing overwhelm.
+        Keep responses brief, practical, and calm. No jargon. Focus on reducing overwhelm.
         """
 
         // Context compression: only last 10 messages

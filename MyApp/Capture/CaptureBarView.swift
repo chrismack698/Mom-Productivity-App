@@ -1,6 +1,5 @@
 // MyApp/Capture/CaptureBarView.swift
 import SwiftUI
-import PhotosUI
 
 struct CaptureBarView: View {
     @Environment(\.modelContext) private var context
@@ -8,7 +7,6 @@ struct CaptureBarView: View {
     @State private var viewModel: CaptureViewModel?
     @State private var textInput = ""
     @State private var showingTextInput = false
-    @State private var photoItem: PhotosPickerItem?
 
     var body: some View {
         HStack(spacing: 12) {
@@ -23,13 +21,6 @@ struct CaptureBarView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .onTapGesture { showingTextInput = true }
             }
-
-            // Camera / photo picker
-            PhotosPicker(selection: $photoItem, matching: .images) {
-                Image(systemName: "camera")
-                    .foregroundStyle(.secondary)
-            }
-
             // Voice button
             Button {
                 Task {
@@ -48,17 +39,6 @@ struct CaptureBarView: View {
         }
         .padding()
         .background(.regularMaterial, in: Capsule())
-        .onChange(of: photoItem) { _, newItem in
-            guard let newItem else { return }
-            Task {
-                if let data = try? await newItem.loadTransferable(type: Data.self),
-                   let image = UIImage(data: data) {
-                    await viewModel?.submitImage(image)
-                    photoItem = nil
-                    onCapture()
-                }
-            }
-        }
         .onAppear {
             viewModel = CaptureViewModel(context: context)
         }
@@ -85,5 +65,17 @@ struct CaptureBarView: View {
 #Preview {
     CaptureBarView(onCapture: {})
         .padding()
-        .modelContainer(for: [CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self], inMemory: true)
+        .modelContainer(
+            for: [
+                CaptureItem.self,
+                ActionItem.self,
+                ChatMessage.self,
+                UserProfile.self,
+                PreferenceSignal.self,
+                UserPreference.self,
+                MemorySummary.self,
+                AppSettings.self
+            ],
+            inMemory: true
+        )
 }

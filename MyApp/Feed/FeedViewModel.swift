@@ -17,12 +17,19 @@ final class FeedViewModel {
     }
 
     func loadItems() {
+        let settings = (try? context.fetch(FetchDescriptor<AppSettings>()))?.first ?? {
+            let defaults = AppSettings()
+            context.insert(defaults)
+            try? context.save()
+            return defaults
+        }()
+
         let descriptor = FetchDescriptor<ActionItem>(
             predicate: #Predicate { !$0.isComplete },
             sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
         )
         let all = (try? context.fetch(descriptor)) ?? []
-        todayItems = all.filter { $0.timeHorizon == .today }
+        todayItems = Array(all.filter { $0.timeHorizon == .today }.prefix(settings.preferredTodayCount))
         thisWeekItems = all.filter { $0.timeHorizon == .thisWeek }
         somedayItems = all.filter { $0.timeHorizon == .someday }
 
@@ -49,7 +56,24 @@ final class FeedViewModel {
         }
         try? context.save()
         Task {
-            await userProfileService?.log("User snoozed: \(item.title) from \(from.rawValue)")
+            await userProfileService?.log("User snoozed: \(item.title) [category: \(item.category), horizon: \(from.rawValue)]")
+        }
+    }
+
+    func saveEdits(for item: ActionItem, title: String, firstStep: String) {
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedFirstStep = firstStep.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTitle.isEmpty, !trimmedFirstStep.isEmpty else { return }
+
+        let changed = item.title != trimmedTitle || item.firstStep != trimmedFirstStep
+        item.title = trimmedTitle
+        item.firstStep = trimmedFirstStep
+        try? context.save()
+
+        if changed {
+            Task {
+                await userProfileService?.log("User edited: \(item.title) [category: \(item.category), horizon: \(item.timeHorizon.rawValue)]")
+            }
         }
     }
 }

@@ -45,6 +45,7 @@ actor TriageBatchProcessor {
             // Fetch user context
             let profileDescriptor = FetchDescriptor<UserProfile>()
             let userContext = (try? context.fetch(profileDescriptor))?.first?.preferenceSummary ?? ""
+            let remindersEnabled = (try? context.fetch(FetchDescriptor<AppSettings>()))?.first?.remindersEnabled ?? true
 
             // Check rate limit before calling cloud
             guard await userProfileService.canMakeCloudCall(isPaidUser: false) else {
@@ -70,7 +71,7 @@ actor TriageBatchProcessor {
                     context.insert(action)
 
                     // Schedule notification if AI returned one
-                    if let notification = result.scheduledNotification {
+                    if remindersEnabled, let notification = result.scheduledNotification {
                         try? await notificationService.schedule(
                             title: notification.title,
                             body: notification.body,

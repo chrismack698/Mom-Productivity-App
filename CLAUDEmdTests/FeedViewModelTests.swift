@@ -9,7 +9,7 @@ struct FeedViewModelTests {
     init() throws {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         container = try ModelContainer(
-            for: CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self,
+            for: CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self, PreferenceSignal.self, UserPreference.self, MemorySummary.self, AppSettings.self,
             configurations: config
         )
     }

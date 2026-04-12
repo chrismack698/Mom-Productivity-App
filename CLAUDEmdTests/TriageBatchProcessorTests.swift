@@ -6,7 +6,7 @@ struct TriageBatchProcessorTests {
     @Test func pendingItemsAreBatchedTogether() async throws {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(
-            for: CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self,
+            for: CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self, PreferenceSignal.self, UserPreference.self, MemorySummary.self, AppSettings.self,
             configurations: config
         )
         await MainActor.run {
@@ -29,7 +29,7 @@ struct TriageBatchProcessorTests {
     @Test func alreadyProcessedItemsAreSkipped() async throws {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(
-            for: CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self,
+            for: CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self, PreferenceSignal.self, UserPreference.self, MemorySummary.self, AppSettings.self,
             configurations: config
         )
         await MainActor.run {
@@ -50,7 +50,7 @@ struct TriageBatchProcessorTests {
     @Test func simpleShortCapturesHandledLocally() async throws {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(
-            for: CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self,
+            for: CaptureItem.self, ActionItem.self, ChatMessage.self, UserProfile.self, PreferenceSignal.self, UserPreference.self, MemorySummary.self, AppSettings.self,
             configurations: config
         )
         await MainActor.run {
