@@ -1,212 +1,293 @@
 # Testing & Phone Simulation Guide
 
-Step-by-step instructions for building, testing, and running this app on your iPhone (simulator and physical device).
+How to connect this repo to your Xcode project, build, test, and run on your iPhone.
 
 ---
 
 ## Prerequisites
 
-Before you begin, make sure you have the following installed on your Mac:
-
-1. **Xcode 26+** — Download from the [Mac App Store](https://apps.apple.com/us/app/xcode/id497799835) or [Apple Developer](https://developer.apple.com/xcode/)
-2. **An Apple ID** — Free tier works for simulator testing; a paid Apple Developer account ($99/year) is needed for physical device deployment
-3. **Command Line Tools** — Install via:
-   ```bash
-   xcode-select --install
-   ```
-4. **iOS 26 Simulator Runtime** — Installed through Xcode (see Step 2 below)
+- **macOS** with **Xcode 26+** installed
+- **An Apple ID** (free works for simulator; paid $99/yr needed for physical device)
+- **Git** (comes with Xcode Command Line Tools)
+- **Command Line Tools** — if not already installed:
+  ```bash
+  xcode-select --install
+  ```
 
 ---
 
-## Step 1: Create the Xcode Project
+## Step 1: Clone the Repo
 
-This repo contains the Swift source files but no `.xcodeproj` file yet. You need to create one:
+Open Terminal and clone the project to your Mac:
 
-1. Open **Xcode**
-2. Select **File → New → Project**
-3. Choose **iOS → App** and click **Next**
-4. Configure the project:
-   - **Product Name:** `MomBrain`
-   - **Team:** Select your Apple ID / team
-   - **Organization Identifier:** e.g. `com.yourname` (this creates the bundle ID `com.yourname.MomBrain`)
-   - **Interface:** SwiftUI
-   - **Storage:** SwiftData
-   - **Language:** Swift
-   - **Testing System:** Swift Testing
-5. Save the project **inside this repo's root directory** (the folder containing `MomBrain/`, `CLAUDEmdTests/`, etc.)
-6. Xcode will generate starter files — **delete the auto-generated `ContentView.swift`, `MomBrainApp.swift`, and `Item.swift`** from the project (they conflict with the ones already in `MomBrain/`)
-7. **Add existing files to the project:**
-   - Right-click the `MomBrain` group in the Project Navigator → **Add Files to "MomBrain"...**
-   - Select all files/folders under `MomBrain/` (Capture, Detail, Feed, Models, Services, Settings, and root-level .swift files)
-   - Make sure "Copy items if needed" is **unchecked** (files are already in place)
-   - Make sure "Add to targets: MomBrain" is **checked**
-8. **Add the test files:**
-   - Right-click the test target group → **Add Files to "MomBrain"...**
-   - Select all files in `CLAUDEmdTests/`
-   - Add to targets: the test target (e.g. `MomBrainTests`)
-9. **Configure Info.plist:**
-   - In the project settings, under **MomBrain target → Info**, set the "Custom iOS Target Properties" or point to `MomBrain/Info.plist`
-   - This ensures microphone, speech recognition, and photo library permission strings are included
+```bash
+git clone https://github.com/chrismack698/Mom-Productivity-App.git
+cd Mom-Productivity-App
+git checkout master
+```
+
+Note the full path to this folder (e.g. `/Users/yourname/Mom-Productivity-App`). You'll need it in Step 2.
 
 ---
 
-## Step 2: Install the iOS Simulator
+## Step 2: Connect Your Existing Xcode Project to the Repo
 
-1. Open **Xcode → Settings → Platforms** (or `Xcode → Preferences → Components` in older versions)
-2. Click the **+** button and download **iOS 26** simulator runtime if not already installed
-3. This download is ~5-7 GB, so it may take a while
+You already created a new Xcode project — now you need to move it into the cloned repo so Xcode and Git are looking at the same files.
+
+### 2a. Find your Xcode project files
+
+Your Xcode project lives wherever you saved it when you created it. It will look something like:
+
+```
+SomeFolder/
+  MomBrain.xcodeproj      (or whatever you named it)
+  MomBrain/
+    MomBrainApp.swift      (auto-generated)
+    ContentView.swift      (auto-generated)
+    Item.swift             (auto-generated)
+  MomBrainTests/
+  MomBrainUITests/
+```
+
+### 2b. Copy ONLY the .xcodeproj into the cloned repo
+
+You only need the `.xcodeproj` bundle — the actual source code already lives in the repo.
+
+1. Open **Finder**
+2. Navigate to your Xcode project folder
+3. **Copy** (not move) the `MomBrain.xcodeproj` file (or whatever it's named) — it looks like a single file but it's actually a folder
+4. **Paste** it into the root of the cloned repo (`Mom-Productivity-App/`)
+
+Your repo should now look like this:
+
+```
+Mom-Productivity-App/
+  MomBrain.xcodeproj       <-- you just added this
+  MomBrain/                <-- source code from the repo
+    MomBrainApp.swift
+    ContentView.swift
+    AppEnvironment.swift
+    Capture/
+    Detail/
+    Feed/
+    Models/
+    Services/
+    Settings/
+    Info.plist
+  CLAUDEmdTests/           <-- test files from the repo
+  CLAUDE.md
+  docs/
+  ...
+```
+
+### 2c. Open the project from its new location
+
+1. **Close Xcode** completely (Cmd+Q)
+2. In Finder, **double-click** `Mom-Productivity-App/MomBrain.xcodeproj` to open it
+3. Xcode will open the project from its new location inside the repo
 
 ---
 
-## Step 3: Build and Run on the Simulator
+## Step 3: Replace Xcode's Auto-Generated Files With the Repo's Source Code
 
-1. In Xcode, select a simulator device from the toolbar dropdown — e.g. **iPhone 16 Pro**
-2. Press **⌘R** (or click the **Play** button) to build and run
-3. The iOS Simulator will launch and the app will install and open automatically
-4. You should see the main feed view with the capture bar at the bottom
+Xcode created placeholder files when you made the project. You need to swap them out for the real source code from the repo.
 
-### Troubleshooting Build Errors
+### 3a. Delete the auto-generated files
 
-- **"No such module" errors:** Make sure all `.swift` files are added to the correct target (MomBrain or the test target)
-- **Swift 6 concurrency errors:** This project uses strict concurrency — make sure Build Settings → Swift Language Version is set to **Swift 6** and Strict Concurrency Checking is **Complete**
-- **SwiftData schema errors:** Clean the build folder with **⌘⇧K** and rebuild
+In Xcode's **Project Navigator** (left sidebar, folder icon, or press **Cmd+1**):
+
+1. Expand the **MomBrain** group
+2. You'll see auto-generated files like `ContentView.swift`, `MomBrainApp.swift`, and `Item.swift`
+3. **Select all of them** (click the first, then Shift+click the last)
+4. Press **Delete**
+5. When prompted, choose **"Move to Trash"** — you don't need these files anymore
+
+### 3b. Add the repo's source files
+
+1. **Right-click** the **MomBrain** group in the Project Navigator
+2. Select **"Add Files to 'MomBrain'..."**
+3. Navigate to the `Mom-Productivity-App/MomBrain/` folder
+4. **Select everything** inside it:
+   - `MomBrainApp.swift`
+   - `ContentView.swift`
+   - `AppEnvironment.swift`
+   - `Info.plist`
+   - `Capture/` (entire folder)
+   - `Detail/` (entire folder)
+   - `Feed/` (entire folder)
+   - `Models/` (entire folder)
+   - `Services/` (entire folder)
+   - `Settings/` (entire folder)
+5. In the dialog at the bottom, make sure:
+   - **"Copy items if needed"** is **UNCHECKED** (critical — the files are already in place)
+   - **"Create groups"** is selected (not "Create folder references")
+   - **"Add to targets: MomBrain"** is **CHECKED**
+6. Click **Add**
+
+### 3c. Add the test files
+
+1. In the Project Navigator, find the test target group (e.g. `MomBrainTests`)
+2. **Right-click** it → **"Add Files to 'MomBrain'..."**
+3. Navigate to `Mom-Productivity-App/CLAUDEmdTests/`
+4. **Select all 8 test files** (CaptureViewModelTests.swift, ClaudeServiceTests.swift, etc.)
+5. Make sure:
+   - **"Copy items if needed"** is **UNCHECKED**
+   - **"Add to targets"** has the **test target checked** (e.g. `MomBrainTests`)
+6. Click **Add**
 
 ---
 
-## Step 4: Run the Tests
+## Step 4: Configure the Project Settings
 
-This project uses the **Swift Testing** framework (not XCTest). Tests are in the `CLAUDEmdTests/` directory.
+### 4a. Set the Info.plist
 
-### From Xcode:
-1. Press **⌘U** to run all tests
-2. Or open the Test Navigator (⌘6) and click the play button next to individual tests
+The app needs microphone, speech recognition, and photo library permissions declared:
 
-### What the tests cover:
-| Test File | What It Tests |
+1. Click the **MomBrain** project (blue icon) at the top of the Project Navigator
+2. Select the **MomBrain** target
+3. Go to the **Build Settings** tab
+4. Search for `Info.plist`
+5. Set the **Info.plist File** value to: `MomBrain/Info.plist`
+
+### 4b. Set Swift Language Version
+
+1. Still in Build Settings, search for `Swift Language Version`
+2. Set it to **Swift 6**
+
+### 4c. Set Deployment Target
+
+1. Go to the **General** tab
+2. Under **Minimum Deployments**, set iOS to **26.0**
+
+### 4d. Set up Signing
+
+1. Go to the **Signing & Capabilities** tab
+2. Check **"Automatically manage signing"**
+3. Select your **Team** (your Apple ID)
+4. Xcode will create a provisioning profile for you
+
+---
+
+## Step 5: Build and Run on the Simulator
+
+1. In the Xcode toolbar at the top, click the **device dropdown** (next to the play/stop buttons)
+2. Under **iOS Simulators**, pick a device — e.g. **iPhone 16 Pro**
+   - If no simulators appear, go to **Xcode → Settings → Platforms** and download the **iOS 26** runtime
+3. Press **Cmd+R** (or click the **Play** button)
+4. Xcode will compile the project and launch the simulator
+5. The app will install and open — you should see the main feed with a capture bar at the bottom
+
+### If the build fails:
+
+| Error | Fix |
 |---|---|
-| `ModelTests.swift` | SwiftData model creation and defaults |
-| `ClaudeServiceTests.swift` | API service triage and chat |
-| `CaptureViewModelTests.swift` | Voice/text capture flow |
-| `FeedViewModelTests.swift` | Feed loading and filtering |
-| `TaskDetailViewModelTests.swift` | Task detail and chat |
-| `TriageBatchProcessorTests.swift` | Batch processing and routing |
-| `UserProfileServiceTests.swift` | Profile observation and summarization |
-| `NotificationServiceTests.swift` | Notification scheduling |
-
-### Expected results:
-- All tests should pass without an API key (the app uses `StubClaudeService` when no key is set)
-- Tests use in-memory SwiftData containers — no persistent data is affected
+| "No such module 'MomBrain'" in test files | Make sure test files are in the **test target**, not the app target |
+| Duplicate symbol / redeclaration | You still have auto-generated files — delete them (Step 3a) |
+| "Cannot find type 'ModelContainer'" | Set deployment target to iOS 26 (Step 4c) |
+| Any weird state | **Cmd+Shift+K** to clean, then **Cmd+R** to rebuild |
 
 ---
 
-## Step 5: Run on Your Physical iPhone
+## Step 6: Run the Tests
 
-### Option A: Direct from Xcode (recommended)
+1. Press **Cmd+U** to run all tests
+2. Or open the **Test Navigator** (Cmd+6) and click the play button next to individual tests
 
-1. **Connect your iPhone** to your Mac via USB (or set up wireless debugging — see below)
-2. **Trust the computer** on your iPhone if prompted
-3. In Xcode's device dropdown, select your iPhone (it will appear under "Devices")
-4. **Set your Team** in the project's Signing & Capabilities:
-   - Select the **MomBrain** target → **Signing & Capabilities** tab
-   - Check **Automatically manage signing**
-   - Select your **Team** (your Apple ID)
-   - Xcode will create a provisioning profile automatically
-5. Press **⌘R** to build and deploy to your phone
-6. **First time only:** On your iPhone, go to **Settings → General → VPN & Device Management** and trust the developer certificate
-
-### Option B: Wireless Debugging (no cable needed after initial setup)
-
-1. First, connect your iPhone via USB and open Xcode
-2. Go to **Window → Devices and Simulators**
-3. Select your iPhone and check **"Connect via network"**
-4. Once the network icon appears next to your device, you can unplug the cable
-5. Your iPhone will now appear in the device dropdown wirelessly
-
-### Free vs. Paid Developer Account
-
-| | Free Apple ID | Paid Developer ($99/yr) |
-|---|---|---|
-| Simulator | Yes | Yes |
-| Deploy to your iPhone | Yes (7-day limit) | Yes (1 year) |
-| App re-signing | Every 7 days | Every year |
-| App Store distribution | No | Yes |
-| TestFlight | No | Yes |
-
-With a free account, the app expires on-device after 7 days and you'll need to re-deploy from Xcode.
+All 8 test files use the **Swift Testing** framework (`@Test` and `#expect()`). They should all pass without any API key configured — the app stubs out the Claude API when no key is set.
 
 ---
 
-## Step 6: Set Up the Claude API (Optional)
+## Step 7: Run on Your Physical iPhone
 
-The app works without an API key (using stub responses), but for real AI triage and chat:
+### 7a. Connect and trust
+
+1. Plug your iPhone into your Mac with a USB cable
+2. If your iPhone asks "Trust This Computer?" — tap **Trust** and enter your passcode
+3. In Xcode's device dropdown, your iPhone will appear under **Devices** (may take a moment)
+
+### 7b. Build and deploy
+
+1. Select your iPhone from the device dropdown
+2. Press **Cmd+R**
+3. Xcode will build and install the app on your phone
+
+### 7c. Trust the developer certificate (first time only)
+
+The first time you run on a physical device, iOS will block the app:
+
+1. On your iPhone, go to **Settings → General → VPN & Device Management**
+2. Under "Developer App", tap your Apple ID / developer certificate
+3. Tap **"Trust"**
+4. Go back to the home screen and tap the app to launch it
+
+### 7d. Wireless debugging (optional, skip the cable next time)
+
+After the first USB connection:
+
+1. In Xcode, go to **Window → Devices and Simulators**
+2. Select your iPhone in the left sidebar
+3. Check **"Connect via network"**
+4. Wait for a globe icon to appear next to your device
+5. You can now unplug the cable — your iPhone will appear wirelessly in the device dropdown
+
+### Free Apple ID limitations
+
+With a free (unpaid) Apple ID, the app you install on your phone **expires after 7 days**. After that, it won't launch and you'll need to rebuild from Xcode. A paid Apple Developer account ($99/year) extends this to 1 year and unlocks TestFlight and App Store distribution.
+
+---
+
+## Step 8: Set Up the Claude API (Optional)
+
+The app works without an API key — it uses stub/mock responses. To enable real AI features:
 
 1. Get an API key from [console.anthropic.com](https://console.anthropic.com)
-2. In Xcode, go to **Product → Scheme → Edit Scheme** (or **⌘<**)
-3. Under **Run → Arguments → Environment Variables**, add:
-   - Name: `ANTHROPIC_API_KEY`
-   - Value: your API key
-4. Rebuild and run — the app will now use the live Claude API for triage and chat
+2. In Xcode: **Product → Scheme → Edit Scheme** (or **Cmd+<**)
+3. Select **Run** in the left sidebar
+4. Go to the **Arguments** tab
+5. Under **Environment Variables**, click **+** and add:
+   - **Name:** `ANTHROPIC_API_KEY`
+   - **Value:** your API key
+6. Click **Close**, then rebuild (Cmd+R)
 
-> **Note:** Environment variables only work when running from Xcode. For a standalone build on your phone, you'll need to modify `MomBrainApp.swift` to read the key from a different source (e.g. Keychain or a settings bundle).
+> **Note:** This env var only works when launching from Xcode. For a standalone on-device build, you'd need to store the key differently (e.g. in Keychain or a config file).
 
 ---
 
-## Step 7: Testing Specific Features on Device
+## Step 9: Connect Xcode to Git (Source Control)
 
-### Voice Capture
-- Tap the **microphone button** in the capture bar
-- Grant microphone and speech recognition permissions when prompted
-- Speak a task like "Pick up kids from soccer at 4pm Thursday"
-- The app will transcribe and triage it into an action item
+Since you cloned the repo and placed the `.xcodeproj` inside it, Xcode should automatically detect Git. To verify:
 
-### Photo Capture
-- Tap the **camera button** in the capture bar
-- Grant photo library permission when prompted
-- Select or take a photo (e.g. a school flyer, a shopping list)
+1. Go to **Source Control → Repositories** (or press **Cmd+2** for the Source Control Navigator)
+2. You should see the `Mom-Productivity-App` repo with branches, commits, etc.
+3. If it doesn't appear, go to **Xcode → Settings → Source Control** and make sure "Enable Source Control" is checked
 
-### Text Input
-- Tap the **text field** in the capture bar
-- Type a task and submit
-
-### Feed View
-- Action items appear grouped by time horizon (Today, This Week, Later)
-- Tap a card to open the detail view
-
-### Settings
-- Access via the gear icon
-- Configure notification preferences and app behavior
+From here you can commit, push, pull, and switch branches directly from Xcode — or keep using Terminal, whichever you prefer.
 
 ---
 
 ## Quick Reference
 
-| Action | Shortcut / Command |
+| Action | Shortcut |
 |---|---|
-| Build & Run | ⌘R |
-| Run All Tests | ⌘U |
-| Clean Build Folder | ⌘⇧K |
-| Open Test Navigator | ⌘6 |
-| Edit Scheme (env vars) | ⌘< |
-| Stop Running | ⌘. |
-| Toggle Simulator Dark Mode | Simulator → Features → Toggle Appearance |
-| Simulate Location | Simulator → Features → Location |
-| Shake Gesture | Simulator → Device → Shake |
+| Build & Run | Cmd+R |
+| Run All Tests | Cmd+U |
+| Clean Build | Cmd+Shift+K |
+| Project Navigator | Cmd+1 |
+| Source Control Navigator | Cmd+2 |
+| Test Navigator | Cmd+6 |
+| Edit Scheme (env vars) | Cmd+< |
+| Stop Running | Cmd+. |
+| Console Output | Cmd+Shift+C |
 
 ---
 
-## Common Issues
+## Testing Features on Device
 
-**"Unable to install app — device is locked"**
-→ Unlock your iPhone and try again.
-
-**"Could not launch app — device not available"**
-→ Make sure the iOS version on your phone is compatible with the deployment target (iOS 26).
-
-**"Untrusted Developer"**
-→ On your iPhone: Settings → General → VPN & Device Management → tap your developer profile → Trust.
-
-**App crashes on launch**
-→ Check the Xcode console (⌘⇧C) for error output. Common causes: missing SwiftData migration, missing permission strings in Info.plist.
-
-**Tests fail with "No such module"**
-→ Make sure the test target has the correct dependencies. In Xcode: test target → Build Phases → Dependencies should include `MomBrain`.
+| Feature | How to test |
+|---|---|
+| **Voice Capture** | Tap the mic button, grant permissions, speak a task |
+| **Photo Capture** | Tap the camera button, grant permissions, pick a photo |
+| **Text Input** | Tap the text field, type a task, submit |
+| **Feed** | Action items appear grouped by Today / This Week / Later |
+| **Task Detail** | Tap any card in the feed to open detail + chat |
+| **Settings** | Tap the gear icon to configure preferences |
