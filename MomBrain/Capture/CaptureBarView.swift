@@ -1,4 +1,4 @@
-// MyApp/Capture/CaptureBarView.swift
+// MomBrain/Capture/CaptureBarView.swift
 import SwiftUI
 
 struct CaptureBarView: View {

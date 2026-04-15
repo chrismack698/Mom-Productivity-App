@@ -1,7 +1,7 @@
 // CLAUDEmdTests/TaskDetailViewModelTests.swift
 import Testing
 import SwiftData
-@testable import MyApp
+@testable import MomBrain
 
 @MainActor
 struct TaskDetailViewModelTests {

@@ -1,6 +1,6 @@
 import Testing
 import SwiftData
-@testable import MyApp
+@testable import MomBrain
 
 struct UserProfileServiceTests {
     @Test func appendsObservationToLog() async throws {

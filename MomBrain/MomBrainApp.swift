@@ -1,9 +1,9 @@
-// MyApp/MyAppApp.swift
+// MomBrain/MomBrainApp.swift
 import SwiftUI
 import SwiftData
 
 @main
-struct MyAppApp: App {
+struct MomBrainApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     // Services — instantiated once and shared

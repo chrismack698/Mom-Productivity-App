@@ -1,6 +1,6 @@
 import Testing
 import SwiftData
-@testable import MyApp
+@testable import MomBrain
 
 struct TriageBatchProcessorTests {
     @Test func pendingItemsAreBatchedTogether() async throws {

@@ -1,4 +1,4 @@
-// MyApp/Settings/SettingsView.swift
+// MomBrain/Settings/SettingsView.swift
 import SwiftUI
 
 struct SettingsView: View {

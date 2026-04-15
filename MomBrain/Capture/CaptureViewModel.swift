@@ -1,4 +1,4 @@
-// MyApp/Capture/CaptureViewModel.swift
+// MomBrain/Capture/CaptureViewModel.swift
 import SwiftUI
 import SwiftData
 import Observation
