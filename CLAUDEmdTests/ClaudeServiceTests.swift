@@ -1,5 +1,5 @@
 import Testing
-@testable import MyApp
+@testable import MomBrain
 import Foundation
 
 struct ClaudeServiceTests {

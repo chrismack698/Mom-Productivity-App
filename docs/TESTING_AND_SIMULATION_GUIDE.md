@@ -26,26 +26,26 @@ This repo contains the Swift source files but no `.xcodeproj` file yet. You need
 2. Select **File → New → Project**
 3. Choose **iOS → App** and click **Next**
 4. Configure the project:
-   - **Product Name:** `MyApp`
+   - **Product Name:** `MomBrain`
    - **Team:** Select your Apple ID / team
-   - **Organization Identifier:** e.g. `com.yourname` (this creates the bundle ID `com.yourname.MyApp`)
+   - **Organization Identifier:** e.g. `com.yourname` (this creates the bundle ID `com.yourname.MomBrain`)
    - **Interface:** SwiftUI
    - **Storage:** SwiftData
    - **Language:** Swift
    - **Testing System:** Swift Testing
-5. Save the project **inside this repo's root directory** (the folder containing `MyApp/`, `CLAUDEmdTests/`, etc.)
-6. Xcode will generate starter files — **delete the auto-generated `ContentView.swift`, `MyAppApp.swift`, and `Item.swift`** from the project (they conflict with the ones already in `MyApp/`)
+5. Save the project **inside this repo's root directory** (the folder containing `MomBrain/`, `CLAUDEmdTests/`, etc.)
+6. Xcode will generate starter files — **delete the auto-generated `ContentView.swift`, `MomBrainApp.swift`, and `Item.swift`** from the project (they conflict with the ones already in `MomBrain/`)
 7. **Add existing files to the project:**
-   - Right-click the `MyApp` group in the Project Navigator → **Add Files to "MyApp"...**
-   - Select all files/folders under `MyApp/` (Capture, Detail, Feed, Models, Services, Settings, and root-level .swift files)
+   - Right-click the `MomBrain` group in the Project Navigator → **Add Files to "MomBrain"...**
+   - Select all files/folders under `MomBrain/` (Capture, Detail, Feed, Models, Services, Settings, and root-level .swift files)
    - Make sure "Copy items if needed" is **unchecked** (files are already in place)
-   - Make sure "Add to targets: MyApp" is **checked**
+   - Make sure "Add to targets: MomBrain" is **checked**
 8. **Add the test files:**
-   - Right-click the test target group → **Add Files to "MyApp"...**
+   - Right-click the test target group → **Add Files to "MomBrain"...**
    - Select all files in `CLAUDEmdTests/`
-   - Add to targets: the test target (e.g. `MyAppTests`)
+   - Add to targets: the test target (e.g. `MomBrainTests`)
 9. **Configure Info.plist:**
-   - In the project settings, under **MyApp target → Info**, set the "Custom iOS Target Properties" or point to `MyApp/Info.plist`
+   - In the project settings, under **MomBrain target → Info**, set the "Custom iOS Target Properties" or point to `MomBrain/Info.plist`
    - This ensures microphone, speech recognition, and photo library permission strings are included
 
 ---
@@ -67,7 +67,7 @@ This repo contains the Swift source files but no `.xcodeproj` file yet. You need
 
 ### Troubleshooting Build Errors
 
-- **"No such module" errors:** Make sure all `.swift` files are added to the correct target (MyApp or the test target)
+- **"No such module" errors:** Make sure all `.swift` files are added to the correct target (MomBrain or the test target)
 - **Swift 6 concurrency errors:** This project uses strict concurrency — make sure Build Settings → Swift Language Version is set to **Swift 6** and Strict Concurrency Checking is **Complete**
 - **SwiftData schema errors:** Clean the build folder with **⌘⇧K** and rebuild
 
@@ -107,7 +107,7 @@ This project uses the **Swift Testing** framework (not XCTest). Tests are in the
 2. **Trust the computer** on your iPhone if prompted
 3. In Xcode's device dropdown, select your iPhone (it will appear under "Devices")
 4. **Set your Team** in the project's Signing & Capabilities:
-   - Select the **MyApp** target → **Signing & Capabilities** tab
+   - Select the **MomBrain** target → **Signing & Capabilities** tab
    - Check **Automatically manage signing**
    - Select your **Team** (your Apple ID)
    - Xcode will create a provisioning profile automatically
@@ -147,7 +147,7 @@ The app works without an API key (using stub responses), but for real AI triage 
    - Value: your API key
 4. Rebuild and run — the app will now use the live Claude API for triage and chat
 
-> **Note:** Environment variables only work when running from Xcode. For a standalone build on your phone, you'll need to modify `MyAppApp.swift` to read the key from a different source (e.g. Keychain or a settings bundle).
+> **Note:** Environment variables only work when running from Xcode. For a standalone build on your phone, you'll need to modify `MomBrainApp.swift` to read the key from a different source (e.g. Keychain or a settings bundle).
 
 ---
 
@@ -209,4 +209,4 @@ The app works without an API key (using stub responses), but for real AI triage 
 → Check the Xcode console (⌘⇧C) for error output. Common causes: missing SwiftData migration, missing permission strings in Info.plist.
 
 **Tests fail with "No such module"**
-→ Make sure the test target has the correct dependencies. In Xcode: test target → Build Phases → Dependencies should include `MyApp`.
+→ Make sure the test target has the correct dependencies. In Xcode: test target → Build Phases → Dependencies should include `MomBrain`.

@@ -21,7 +21,7 @@
 - use BuildProject for completion (not shell commands or xcodebuild)
 - Previews are available via RenderPreview
 - SPM for package management - no CocoaPods
-- Build target: "MyApp" iOS
+- Build target: "MomBrain" iOS
 
 ## Testing
 - Use Swift Testing framework -- NOT XCTest

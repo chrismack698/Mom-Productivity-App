@@ -1,4 +1,4 @@
-// MyApp/Capture/ImageCaptureSession.swift
+// MomBrain/Capture/ImageCaptureSession.swift
 import Vision
 import UIKit
 
